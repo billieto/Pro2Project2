@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include "lists.h"
 #include "inputnfiles.h"
 #include "main.h"
@@ -14,12 +15,14 @@ int main(void)
     char temp[MAX_SIZE] = {'\0'};
     char *token = NULL, *test_token = NULL;
     char *filename = NULL, ch = '\0', *str = NULL;
-    
 
+    srand(time(NULL));
+    
     while(TRUE)
     {
         putchar('&');
         putchar('>');
+        putchar(' ');
 
         len1 = read_text(temp, MAX_SIZE, TRUE);
 
@@ -32,7 +35,7 @@ int main(void)
         {
            if((token = strchr(temp, ' ')) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
@@ -40,33 +43,36 @@ int main(void)
         }
         else if(!strncmp(temp, "print", 5))
         {
-            if((token = strtok(temp, " ")) == NULL) // Mporw auta na ta blaw se sunartisi
+            if((token = strtok(temp, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
             else if((token = strtok(NULL, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
             else if((test_token = strtok(NULL, " ")) != NULL)
             {
-                puts("Invalid Input, please enther a valid one");            
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
             if(temp[5] != '+' && temp[5] != '-' && temp[5] != '=')
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
+
+            count = 0;
+            count2 = 0;
 
             for(i = 0; i < strlen(token); i++)
             {
                 if(!isdigit(token[i]) && token[i] != '/' && token[i] != ':')
                 {
-                    puts("Invalid Input, please enther a valid one");
+                    puts("\nInvalid Input, please enther a valid one");
                     continue;
                 }
                 else if(token[i] == '/')
@@ -79,62 +85,81 @@ int main(void)
                 }
             }
 
-            if((count != 3 && count2 != 0)|| (count2 != 1 && count != 0))
+            if(count == 2)
             {
-                puts("Invalid Input, please enther a valid one");
+                print(temp[5], token, '/');
+            }
+            else if(count2 == 1)
+            {
+                print(temp[5], token, ':');
+            }
+            else if(count == 0 && count2 == 0 && atoi(token) >= 0)
+            {
+                print(temp[5], token, '\0');
+            }
+            else
+            {
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
-
-            print(temp[5], token);
         }
         else if(!strncmp(temp, "delete", 6))
         {
             if((token = strtok(temp, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
             else if((token = strtok(NULL, " ")) != NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
             if(temp[6] != 'N' && temp[6] != 'O')
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
             delete(temp[6]);
-
-            continue;
         }
         else if(!strncmp(temp, "find", 4))
         {
             if((token = strtok(temp, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
             else if((token = strtok(NULL, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
             else if((test_token = strtok(NULL, " ")) != NULL)
             {
-                puts("Invalid Input, please enther a valid one");            
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
             if(temp[4] != 'N' && temp[4] != 'C' && temp[4] != 'S')
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
-            if(token[0] == '*' && strlen(token) == 1)
+            len2 = strlen(token);
+
+            for(i = 0; i < len2; i++)
+            {
+                if(isdigit(token[i]))
+                {
+                puts("\nInvalid Input, please enther a valid one");
+                    continue;
+                }
+            }
+
+            if(token[0] == '*' && len2 == 1)
             {
                 find('*', token);
             }
@@ -147,16 +172,16 @@ int main(void)
         {
             if((token = strtok(temp, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
             else if((token = strtok(NULL, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
-            if((num = atoi(token)) == 0)
+            if((num = atoi(token)) <= 0)
             {
                 puts("Invalid Input, please enther a valid one");
                 continue;
@@ -164,13 +189,13 @@ int main(void)
 
             if((token = strtok(NULL, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
             if((test_token = strtok(NULL, " ")) != NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
@@ -180,29 +205,29 @@ int main(void)
         {
             if((token = strtok(temp, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
             else if((token = strtok(NULL, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
-            if((num = atoi(token)) == 0)
+            if((num = atoi(token)) <= 0)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
             if((token = strtok(NULL, " ")) == NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
             else if((test_token = strtok(NULL, " ")) != NULL)
             {
-                puts("Invalid Input, please enther a valid one");
+                puts("\nInvalid Input, please enther a valid one");
                 continue;
             }
 
@@ -212,9 +237,13 @@ int main(void)
         {
             sum();
         }
+        else if(!strncmp(temp, "man", 3))
+        {
+            manual();
+        }
         else
         {
-            puts("Invalid command, please enther a valid one");
+            puts("\nInvalid Input, please enther a valid one");
             continue;
         }
     }

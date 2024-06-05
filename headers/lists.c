@@ -6,11 +6,12 @@
 #include "inputnfiles.h"
 #include "lists.h"
 
-void print(char ch, char *str)
+#define INT_SIZE sizeof(int)
+
+void print(char ch, char *str, char print)
 {
     billionare *temp = head;
     int len = 0, i = 0;
-    char print = '\0';
     char *token = NULL, *token2 = NULL, *token3 = NULL;
 
     if(check_list_empty(head))
@@ -18,20 +19,18 @@ void print(char ch, char *str)
         return;
     }
 
-    if((token = strtok(str, "/")) != NULL) // Na tsekarw gia to an exei mono hmerominia kai wra, na to kanw panw sto read_input
+    switch(print)
     {
-        print = '/';
-        token2 = strtok(NULL, "/");
-        token3 = strtok(NULL, "/");
-    }
-    else if((token = strtok(str, ":")) != NULL)
-    {
-        token2 = strtok(NULL, ":");
-        print = ':';
-    }
-    else
-    {
-        print = '\0';
+        case '/':
+            token = strtok(str, "/");
+            token2 = strtok(NULL, "/");
+            token3 = strtok(NULL, "/");
+         break;
+
+        case ':':
+            token = strtok(str, ":");
+            token2 = strtok(NULL, ":");
+         break;
     }
 
     switch(ch)
@@ -511,7 +510,7 @@ void write_node(char *str)
         switch(i)
         {
             case 0:
-                u_inisialize(&(new -> id.name), &(new -> id.namelen), token);
+                inisialize(&(new -> id.name), &(new -> id.namelen), token);
 
                 if((chr = strchr(new -> id.name, ' ')) != NULL)
                 {
@@ -572,7 +571,7 @@ void write_node(char *str)
              break;
 
             case 2:
-                u_inisialize(&new -> corp.source, &new -> corp.sourcelen, token);
+                inisialize(&new -> corp.source, &new -> corp.sourcelen, token);
 
                 if((chr = strchr(new -> corp.source, ' ')) != NULL)
                 {
@@ -605,6 +604,8 @@ void write_node(char *str)
         i++;
     }
 
+    bank_account(new);
+
     if(head == NULL)
         {
             head = new;
@@ -618,16 +619,6 @@ void write_node(char *str)
             last -> next = new;
             head -> prev = new;
         }
-}
-
-void u_inisialize(char **str, int *len, char *token)
-{
-    *len = strlen(token);
-    *str = (char*) malloc((*len + 1) * CHAR_SIZE);
-    check_malloc(*str);
-    strcpy(*str, token);
-
-    right_input(*str);
 }
 
 void inisialize(char **str, int *len, char *token)
@@ -668,4 +659,66 @@ void free_list(void)
     }
 
     head = NULL;
+}
+
+int check_list_empty(billionare *head)
+{
+    if(head == NULL)
+    {
+        puts("\nList is empty");
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+void bank_account(billionare *new)
+{
+    int i, checkdigit, checkdigit_finder[10], flag = TRUE;
+    double d;
+    billionare *temp = head;
+
+    new -> id.bank = (int*) malloc(11 * INT_SIZE);
+    check_malloc(new -> id.bank);
+
+    while(flag == TRUE)
+    {
+        flag = FALSE;
+
+        for(i = 0; i < 9; i++)
+        {
+            d = (double) rand() / ( (double) RAND_MAX + 1);
+            d = d * 10;
+            new -> id.bank[i] = (int) d;
+        }
+
+        for(i = 1; i < 10; i += 2)
+        {
+            checkdigit_finder[i] = new -> id.bank[i];
+            checkdigit_finder[i] *= 2;
+
+            if(checkdigit_finder[i] > 9)
+            {
+                checkdigit_finder[i] = checkdigit_finder[i] / 10 + checkdigit_finder[i] % 10;
+            }
+
+            checkdigit += checkdigit_finder[i];
+        }
+
+        checkdigit *= 9;
+        checkdigit %= 10;
+
+        new -> id.bank[10] = checkdigit;
+
+        while(temp != head)
+        {
+            if(!memcmp(new -> id.bank, temp -> id.bank, 11 * INT_SIZE))
+            {
+                flag = TRUE;
+                break;
+            }
+
+            temp = temp -> next;
+        }
+    }
 }

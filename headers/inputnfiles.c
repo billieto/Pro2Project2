@@ -6,11 +6,20 @@
 #include "lists.h"
 #include "inputnfiles.h"
 
+#define BOLD_ON "\e[1m"
+#define OFF "\e[m"
+#define UNDERLINE "\e[4m"
+
 void save(char *filename, int input)
 {
     FILE *save = NULL;
     billionare *temp = head;
-    int i = 0;
+    int i = 0, j = 0;
+
+    if(check_list_empty(head))
+    {
+        return;
+    }
 
     save = fopen(filename, "w");
     if(check_file(save))
@@ -41,7 +50,12 @@ void save(char *filename, int input)
         {
             fprintf(save, "%d/%d/%d %d:%d;", temp -> birthdate.day, temp -> birthdate.month, temp -> birthdate.year, temp -> birthtime.hour, temp -> birthtime.minutes);
         }
-        fprintf(save, "%.1f\n", temp -> id.networth);
+        fprintf(save, "%.1f;", temp -> id.networth);
+        for(j = 0; j < 10; j++)
+        {
+            fprintf(save, "%d", temp -> id.bank[j]);
+        }
+        fprintf(save, "\n");
 
         i++;
 
@@ -150,12 +164,6 @@ int check_input(char *str)
                         count3++;
                     }
                 }
-
-                // if(count < 1 || count2 > 1 || count3 > 1)
-                // {
-                //     puts("Invalid Input, please enther a valid one");
-                //     return TRUE;
-                // }
 
                 str = NULL;
              break;
@@ -342,32 +350,11 @@ int check_input(char *str)
     return FALSE;
 }
 
-// int isalphabetic(char ch)
-// {
-//     if((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= 199 && ch <= 255))
-//     {
-//         return TRUE;
-//     }
-
-//     return FALSE;
-// }
-
-int check_list_empty(billionare *head)
-{
-    if(head == NULL)
-    {
-        printf("List is empty\n");
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
 void check_malloc(void *ptr)
 {
     if(ptr == NULL)
     {
-        printf("Error: allocating memory failed\n");
+        puts("\nError: allocating memory failed");
         exit(EXIT_FAILURE);
     }
 }
@@ -376,7 +363,7 @@ int check_file(FILE *file)
 {
     if(file == NULL)
     {
-        printf("Error: cant open file or file name is incorect\n");
+        puts("\nError: cant open file or file name is incorect\n");
         return TRUE;
     }
 
@@ -389,7 +376,7 @@ int read_text(char str[], int size, int flag)
 
     if(fgets(str, size, stdin) == NULL)
     {
-        printf("Error reading input\n");
+        puts("\nError reading input");
         exit(EXIT_FAILURE);
     }
     len = strlen(str);
@@ -402,7 +389,7 @@ int read_text(char str[], int size, int flag)
         }
         else
         {
-            printf("Error: too few characters\n");
+            printf("\nError: too few characters");
             exit(EXIT_FAILURE);
         }
         
@@ -410,4 +397,61 @@ int read_text(char str[], int size, int flag)
     }
 
     return EOF;
+}
+
+void manual(void) // inspired from grep manual
+{
+    puts(BOLD_ON"\nNAME"OFF);
+    puts("\tBillionare list handler\n");
+    puts(BOLD_ON"SYNOPSIS"OFF);
+    printf(BOLD_ON"\t &> "OFF);
+    putchar('[');
+    printf(UNDERLINE"OPTION"OFF);
+    printf("...] ");
+    printf(UNDERLINE"NUMBER"OFF);
+    putchar(' ');
+    putchar('[');
+    printf(UNDERLINE"FILE"OFF);
+    printf("...]\n");
+    printf(BOLD_ON"\t &> "OFF);
+    putchar('[');
+    printf(UNDERLINE"OPTION"OFF);
+    printf("...] ");
+    printf(UNDERLINE"NUMBER"OFF);
+    putchar('\n');
+    printf(BOLD_ON"\t &> "OFF);
+    putchar('[');
+    printf(UNDERLINE"OPTION"OFF);
+    printf("...] ");
+    printf(UNDERLINE"PATTERNS\n"OFF);
+    printf(BOLD_ON"\t &> "OFF);
+    putchar('[');
+    printf(UNDERLINE"OPTION"OFF);
+    printf("...]\n\n");
+    puts(BOLD_ON"DESCRIPTION"OFF);
+    puts("\tThis program is used to handle a list of billionares. The user can add, delete, print, save, load, sum and find billionares.");
+    puts("\tThe user can also exit the program by typing 'exit'.\n");
+    puts(BOLD_ON"OPTIONS"OFF);
+    printf(BOLD_ON"  newbil "OFF);
+    puts("<name>;<city/country>;<source>;<ethnisity>;<gender>;<birth date> <birthdate time>;<networth>");
+    puts("\tAdd a new billionare to the list\n");
+    printf(BOLD_ON"  print+, print-, print= "OFF);
+    puts("<birth time> or <birth date> or <networth>");
+    puts("\tPrints the billionares that the patterns are found in the list. '+' for greater, '-' for less and '=' for equal.\n");
+    printf(BOLD_ON"  findN, findC, findS "OFF);
+    puts("<name> or <city> or <source> or *");
+    puts("\tFinds the billionares that the patterns are found in the list. With '*' it prints all the billionares that are loaded.\n");
+    printf(BOLD_ON"  load "OFF);
+    puts("<number> <file>");
+    puts("\tLoads the number of billionares from the file. If the number is greater than the number of billionares in the file, it loads all the billionares.\n");
+    printf(BOLD_ON"  save "OFF);
+    puts("<number> <file>");
+    puts("\tSaves the number of billionares to the file. If the number is greater than the number of billionares in the list, it saves all the billionares.");
+    puts("\tIt also creates the file if it does not exist.\n");
+    puts(BOLD_ON"  sum"OFF);
+    puts("\tPrints the sum of the networth of the billionares in the list.\n");
+    puts(BOLD_ON"  deleteN, deleteO"OFF);
+    puts("\tDeletes the newst (deleteN) or the oldest (deleteO) billionare from the list.\n");
+    puts(BOLD_ON"  exit"OFF);
+    puts("\tExits the program.\n");
 }
