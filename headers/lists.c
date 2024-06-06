@@ -6,8 +6,6 @@
 #include "inputnfiles.h"
 #include "lists.h"
 
-#define INT_SIZE sizeof(int)
-
 void print(char ch, char *str, char print)
 {
     billionare *temp = head;
@@ -465,7 +463,7 @@ void simple_print(billionare *temp)
     printf("Networth: %.1f\n", temp -> id.networth);
 }
 
-void sum(void)
+double sum(void)
 {
     billionare *temp = head;
     double sum = 0;
@@ -487,8 +485,7 @@ void sum(void)
         }
     }
 
-    printf("The sum of all networths is: %.2f\n", sum);
-
+    return sum;
 }
 
 void write_node(char *str)

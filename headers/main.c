@@ -6,17 +6,19 @@
 #include "lists.h"
 #include "inputnfiles.h"
 #include "main.h"
+#include "bonus.h"
 
 billionare *head = NULL;
 
 int main(void)
 {
-    int len1 = 0, len2 = 0, num = 0, i = 0, count = 0, count2 = 0;
+    int len1 = 0, len2 = 0, num = 0, i = 0, count = 0, count2 = 0, bonus = FALSE;
     char temp[MAX_SIZE] = {'\0'};
     char *token = NULL, *test_token = NULL;
     char *filename = NULL, ch = '\0', *str = NULL;
 
     srand(time(NULL));
+    puts("Welcome to the Billionare list handler\n");
     
     while(TRUE)
     {
@@ -28,6 +30,11 @@ int main(void)
 
         if(!strncmp(temp, "exit", 4))
         {
+            if(strlen(temp) != 4)
+            {
+                puts("\nInvalid Input, please enther a valid one");
+                continue;
+            }
             free_list();
             break;
         }
@@ -235,11 +242,25 @@ int main(void)
         }
         else if(!strncmp(temp, "sum", 3))
         {
-            sum();
+            printf("The sum of all networths is: %.2f\n", sum());
         }
-        else if(!strncmp(temp, "man", 3))
+        else if (!strncmp(temp, "bonus", 5))
+        {
+            bonus = TRUE;
+        }
+        else if(!strncmp(temp, "man", 3) && bonus)
         {
             manual();
+        }
+        else if(!strncmp(temp, "average", 7))
+        {
+            if(temp[7] != 'N' && temp[7] != 'A')
+            {
+                puts("\nInvalid Input, please enther a valid one");
+                continue;
+            }
+
+            average(temp[7]);
         }
         else
         {
