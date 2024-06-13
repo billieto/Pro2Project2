@@ -69,7 +69,7 @@ void save(char *filename, int input)
 void load(char *filename, int input)
 {
     FILE *file = NULL;
-    int len = 0, i = 0;
+    int i = 0;
     char temp[MAX_SIZE] = {'\0'}, *str = NULL, *str2 = NULL;
 
     file = fopen(filename, "r");
@@ -80,21 +80,21 @@ void load(char *filename, int input)
 
     while((fgets(temp, MAX_SIZE, file) != NULL) && i < input)
     {
-        len = strlen(temp);
-        str = (char*) malloc((len + 1) * CHAR_SIZE);
+        str = strdup(temp);
         check_malloc(str);
-        strcpy(str, temp);
 
-        len = strlen(str);
-        str2 = (char*) malloc((len + 1) * CHAR_SIZE);
+        str2 = strdup(str);
         check_malloc(str2);
-        strcpy(str2, str);
 
         if(check_input(str2))
         {
+            free(str);
+            free(str2);
             break;
         }
-        
+
+        free(str2);
+
         write_node(str);
 
         free(str);
@@ -131,125 +131,170 @@ int check_input(char *str)
         
         switch(j)
         {
-            case 0:
+            case 0: // checking name
                 len = strlen(token);
+                count = 0;
+                count2 = 0;
 
-                if(len == 0)
+                if(!len) // checking if name is empty
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, name cant be empty");
                     return TRUE;
                 }
 
-                for(i = 0; i < len; i++)
+                for(i = 0; i < len; i++) // checking if name contains invalid characters
                 {
-                    if(isdigit(token[i]))
+                    if(isdigit(token[i]) && !isprint(token[i]) && token[i] != ' ' && token[i] != '&' && token[i] != '.' && token[i] != '-')
                     {
-                        puts("Invalid Input, please enter a valid one");
+                        puts("\nWrong input in list, name cant containe numbers or invalid characters");
                         return TRUE;
                     }
-                    else if(token[i] == ' ') // Den xreiazete
+                    else if(isalpha(token[i]))
                     {
                         count++;
                     }
-                    else if(token[i] == '&')
+                    else
                     {
                         count2++;
                     }
-                    else if(token[i] == ',')
-                    {
-                        count3++;
-                    }
+                }
+
+                if(count < count2) // checking if name contains less letters than other characters
+                {
+                    puts("\nWrong input in list, name cannot containe less letters than other characters");
+                    return TRUE;
                 }
 
                 str = NULL;
              break;
 
-            case 1:
-                count = 0;
-
+            case 1: // checking city and country
                 len = strlen(token);
+                count = 0;
+                count2 = 0;
+                count3 = 0;
 
-                if(len == 0)
+                if((chr = strchr(token, '/')) == NULL) // checking if city and country are seperated by '/'
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, city or country of source must have a '/'");
                     return TRUE;
                 }
+                
+                chr[0] = '\0';
 
-                for(i = 0; i < len; i++)
+                if(!strlen(token)) // checking if city is empty
                 {
-                    if(isdigit(token[i]) && token[i] != ' ' && token[i] != '/' && token[i] != '(' && token[i] != ')')
+                    puts("\nWrong input in list, city of source cant be empty");
+                    return TRUE;
+                }
+                else if(!strlen(chr + 1)) // checking if country is empty
+                {
+                    puts("\nWrong input in list, country of source cant be empty");
+                    return TRUE;
+                }
+                
+                for(i = 0; i < len; i++) // checking if city and country contain invalid characters
+                {
+                    if(isdigit(token[i]) && !isprint(token[i]) && token[i] != ' ' && token[i] != '\0' && token[i] != '(' && token[i] != ')' && token[i] != '?')
                     {
-                        puts("Invalid Input, please enter a valid one");
+                        puts("\nWrong input in list, city of source cant containe numbers or any other special characters");
                         return TRUE;
                     }
-                    else if(token[i] == '/')
+                    else if(isalpha(token[i]))
                     {
-                        count++;
+                        count2++;
+                    }
+                    else
+                    {
+                        count3++;
                     }
                 }
 
-                if(count != 1)
+                if(count2 < count3 && token[0] != '?' && chr[1] != '?' && strlen(token) != 1 && strlen(chr) != 1) // checking if city contains less letters than other characters
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, city or country of source cant containe less letters than other characters");
                     return TRUE;
                 }
              break;
 
-            case 2:
+            case 2: // checking source
+                len = strlen(token);
                 count = 0;
                 count2 = 0;
 
-                len = strlen(token);
-
-                if(len == 0)
+                if(!len) // checking if source is empty
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, source can not be empty");
                     return TRUE;
                 }
 
-                for(i = 0; i < len; i++)
+                for(i = 0; i < len; i++) // checking if source contains invalid characters
                 {
                     if(!isprint(token[i]))
                     {
-                        puts("Invalid Input, please enter a valid one");
+                        puts("\nWrong input in list, source can not containe invalid characters");
                         return TRUE;
                     }
-                }
-
-             break;
-
-            case 3:
-                len = strlen(token);
-
-                if(len == 0)
-                {
-                    puts("Invalid Input, please enter a valid one");
-                    return TRUE;
-                }
-                else if(len == 1 && token[0] == '?')
-                {
-                    puts("Invalid Input, please enter a valid one");
-                    return TRUE;
-                }
-
-                for(i = 0; i < len; i++)
-                {
-                    if(!isalpha(token[i]) && token[i] != ' ' && token[i] != '?' && token[i] != '(' && token[i] != ')' && token[i] != '.')
+                    else if(isalpha(token[i]))
                     {
-                        puts("Invalid Input, please enter a valid one");
-                        return TRUE;
+                        count++;
                     }
+                    else
+                    {
+                        count2++;
+                    }
+                }
+
+                if(count < count2) // checking if source contains less letters than other characters
+                {
+                    puts("\nWrong input in list, source cant containe less letters than other characters");
+                    return TRUE;
                 }
              break;
 
-            case 4:
+            case 3: // checking ethnisity
                 len = strlen(token);
+                count = 0;
+                count2 = 0;
 
-                if(len != 1 && token[0] != 'M' && token[0] != 'F' && token[0] != '?')
+                if(!len) // checking if ethnisity is empty
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, ethnisity can not be empty");
                     return TRUE;
                 }
+
+                for(i = 0; i < len; i++) // checking if ethnisity contains invalid characters
+                {
+                    if(isdigit(token[i]) && !isprint(token[i]) && token[i] != ' ' && token[i] != '(' && token[i] != ')' && token[i] != '.')
+                    {
+                        puts("\nWrong input in list, ethnisity can not containe numbers");
+                        return TRUE;
+                    }
+                    else if(isalpha(token[i]))
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        count2++;
+                    }
+                }
+
+                if(count < count2 && token[0] != '?' && len != 1) // checking if ethnisity contains less letters than other characters
+                {
+                    puts("\nWrong input in list, ethnisity cant containe less letters than other characters");
+                    return TRUE;
+                }
+             break;
+
+            case 4: // checking gender
+                len = strlen(token);
+
+                if(len != 1 && token[0] != 'M' && token[0] != 'F' && token[0] != 'O' && token[0] != 'm' && token[0] != 'f' && token[0] != 'o')
+                {
+                    puts("\nWrong ipnut in list, gender must be 'O' or 'F' or 'M' and only one character");
+                    return TRUE;
+                } // checking if gender is valid
              break;
 
             case 5:
@@ -259,17 +304,17 @@ int check_input(char *str)
 
                 len = strlen(token);
 
-                if(len == 0)
+                if(!len) // checking if birthdate and birthtime are empty
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, birthdate and birthtime can not be empty");
                     return TRUE;
                 }
 
-                for(i = 0; i < len; i++)
+                for(i = 0; i < len; i++) // checking if birthdate and birthtime contain invalid characters
                 {
-                    if(isalpha(token[i]) && token[i] != '/' && token[i] != ' ' && token[i] != ':')
+                    if(isalpha(token[i]) && !isprint(token[i]) && token[i] != '/' && token[i] != ' ' && token[i] != ':')
                     {
-                        puts("Invalid Input, please enter a valid one");
+                        puts("\nWrong input in list, birthdate and birthtime can not containe letters or special characters");
                         return TRUE;
                     }
                     else if(token[i]  == '/')
@@ -286,60 +331,86 @@ int check_input(char *str)
                     }
                 }
 
-                if(count != 2 || count2 != 1 || count3 != 1)
+                if(count != 2 || count2 != 1 || count3 != 1) // checking if birthdate and birthtime are valid
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, birthdate and birthtime must have 2 '/' and 1 ' ' and 1 ':'");
                     return TRUE;
                 }
 
                 chr = strchr(token, '/');
-                if(atoi(token) < 1 || atoi(token) > 31 || atoi(chr + 1) < 1 || atoi(chr + 1) > 12) // m-porw na kanw elenxw gia to an einai febrouarios kai exei 30 h 31
-                {
-                    puts("Invalid Input, please enter a valid one");
-                    return TRUE;
-                }
-
                 chr[0] = '.';
-                chr = strchr(token, '/');
-
-                if(atoi(chr + 1) < 1900 || atoi(chr + 1) > 2024)
+                count = atoi(token);
+                count2 = atoi(chr + 1);
+                if(count < 1 || count > 31 || count2 < 1 || count2 > 12) // checking if birthdate is valid
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, please enter a valid date");
+                    return TRUE;
+                }
+                else if((count2 == 4 || count2 == 6 || count2 == 9 || count2 == 11) && count > 30)
+                {
+                    puts("\nWrong input in list, please enter a valid date");
+                    return TRUE;
+                }
+
+                chr = strchr(token, '/');
+                count3 = atoi(chr + 1);
+
+                if(count3 < 1900 || count3 > 2024) // checking if year is valid
+                {
+                    puts("\nWrong input in list, please enter a valid year");
+                    return TRUE;
+                }
+                else if(count2 == 2 && count > 29 && leapyear(count3)) // checking if year is leap year and if so if february is valid
+                {
+                    puts("\nWrong input in list, please enter a valid date");
+                    return TRUE;
+                }
+                else if(count2 == 2 && count > 28 && !leapyear(count3)) // checking if year is not leap year and if so if february is valid
+                {   
+                    puts("\nWrong input in list, please enter a valid date");
                     return TRUE;
                 }
 
                 chr = strchr(token, ' ');
-                if(atoi(chr + 1) < 0 || atoi(chr + 1) > 23)
+                count = atoi(chr + 1);
+
+                if(count < 0 || count > 23) // checking if hour is valid
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, please enter a valid hour");
                     return TRUE;
                 }
 
                 chr = strchr(token, ':');
-                if(atoi(chr + 1) < 0 || atoi(chr + 1) > 59)
+                count = atoi(chr + 1);
+
+                if(count < 0 || count > 59) // checking if minute is valid
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, please enter a valid minute");
                     return TRUE;
                 }
              break;
 
-            case 6:
+            case 6: // checking networth
                 num = atof(token);
 
-                if(num < 0)
+                if(num < 0) // checking if networth is valid
                 {
-                    puts("Invalid Input, please enter a valid one");
+                    puts("\nWrong input in list, networth can not be negative");
                     return TRUE;
                 }
              break;
+
+            default: // if it has more ';' than it should
+                puts("Wrong input in list, too many arguments");
+                return TRUE;
         }
 
         j++;
     }
 
-    if(j != 7)
+    if(j != 7) // if it has less ';' than it should
     {
-        puts("Invalid Input, please enter a valid one");
+        puts("Wrong input in list, too few arguments");
         return TRUE;
     }
 
@@ -366,7 +437,7 @@ int check_file(FILE *file)
     return FALSE;
 }
 
-int read_text(char str[], int size, int flag)
+void read_text(char str[], int size, int flag) // Inspired by Mr. Tselikas book
 {
     int len;
 
@@ -389,8 +460,28 @@ int read_text(char str[], int size, int flag)
             exit(EXIT_FAILURE);
         }
         
-        return len;
+        return;
     }
 
-    return EOF;
+    return;
+}
+
+int leapyear(int year)
+{
+    if(year % 4 != 0)
+    {
+        return FALSE;
+    }
+    else if(year % 100 != 0)
+    {
+        return TRUE;
+    }
+    else if(year % 400 != 0)
+    {
+        return FALSE;
+    }
+    else
+    {
+        return TRUE;
+    }
 }

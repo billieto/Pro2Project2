@@ -12,7 +12,8 @@ void print(char ch, char *str, char print);
 void delete(char ch);
 void inisialize(char **str, int *len, char *token);
 double sum(void);
-void simple_print(billionare *temp);
+void all_lower(char *str, int len);
+void simple_print(billionare *temp, int *flag);
 void bank_account(billionare *new);
 int check_list_empty(billionare *head);
 

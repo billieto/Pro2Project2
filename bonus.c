@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "main.h"
 #include "lists.h"
+#include "inputnfiles.h"
 #include "bonus.h"
 
 void manual(void) // inspired from grep manual
@@ -59,17 +60,22 @@ void manual(void) // inspired from grep manual
     puts(BOLD_ON"  deleteN, deleteO"OFF);
     puts("\tDeletes the newst (deleteN) or the oldest (deleteO) billionare from the list.\n");
     puts(BOLD_ON"  exit"OFF);
-    puts("\tExits the program.");
+    puts("\tExits the program.\n");
     puts(BOLD_ON"   averageA, averageN"OFF);
-    puts("\tFinds the average Age on Net worth of the billionares inserted in the list\n");
-    puts(BOLD_ON""OFF);
-}// NA BALW KAI TA KAINOURIA :D
+    puts("\tPrints the average Age or Networth of the billionares inserted in the list\n");
+    puts(BOLD_ON"   medianA, medianN"OFF);
+    puts("\tFinds the median Age or Networth of the billionares inserted in the list\n");
+    puts(BOLD_ON"   groupG, groupE"OFF);
+    puts("\tPrints the amount of Queer, Females and Males or the amount of ethnisities and their amount of billionares inserted in the list\n");
+    puts(BOLD_ON"   count"OFF);
+    puts("\tPrints the amount of billionares that are inserted in the list\n");
+}
 
 void group(char ch)
 {
-    int count = 0, count2 = 0, count3 = 0, *n = NULL, i = 0, j = 0;
+    int count = 0, count2 = 0, count3 = 0, *n = NULL, flag = FALSE, j = 0;
     char **groupn = NULL;
-    billionare *temp = head, *temp2 = head;
+    billionare *temp = head;
 
     if(check_list_empty(head))
     {
@@ -78,7 +84,7 @@ void group(char ch)
 
     switch(ch)
     {
-        case 'G':
+        case 'G': // grouping the genders
             while(TRUE)
             {
                 if(temp -> id.gender == 'M')
@@ -101,55 +107,56 @@ void group(char ch)
                 }
             }
             
-            printf("There are %d unknown/queer billionares\n", count3);
+            printf("\nThere are %d unknown/queer billionares\n", count3);
             printf("There are %d Female billionares\n", count2);
             printf("There are %d Male billionares\n", count);
          break;
 
-        case 'E':
+        case 'E': // grouping ethnisisities
             while(TRUE)
             {
-                if(groupn == NULL)
+                if(groupn == NULL) // if we have no ethnisities allocated
                 {
-                    groupn = (char**) malloc(sizeof(char*) * (count + 1));
+                    count++; // inc count because 1 ethnisity
+                    groupn = (char**) malloc(PCHAR_SIZE * count);
                     check_malloc(groupn);
 
                     *groupn = (char*) malloc(CHAR_SIZE * temp -> id.ethnicitylen);
                     check_malloc(*groupn);
                     strcpy(*groupn, temp -> id.ethnisity);
 
-                    n = (int*) malloc(INT_SIZE);
+                    n = (int*) malloc(INT_SIZE * count);
                     check_malloc(n);
 
-                    *n++;
-
-                    i++;
+                    n[0] = 1;
                 }
-                else
+                else // else we check the array if the ethnisity is already there if not we allocate memmory for it
                 {
-                    for(j = 0; j < i; i++)
+                    flag = FALSE;
+
+                    for(j = 0; j < count; j++)
                     {
                         if(!strcmp(groupn[j], temp -> id.ethnisity))
                         {
                             n[j]++;
+                            flag = TRUE;
                             break;
                         }
-                        else
-                        {
-                            groupn = (char**) realloc(groupn, PCHAR_SIZE * (count + 1));
-                            check_malloc(groupn);
+                    }
 
-                            groupn[j] = (char*) malloc(CHAR_SIZE * temp -> id.ethnicitylen);
-                            check_malloc(groupn[j]);
-                            strcpy(groupn[j], temp -> id.ethnisity);
+                    if(!flag)
+                    {
+                        count++;
+                        groupn = (char**) realloc(groupn, PCHAR_SIZE * count);
+                        check_malloc(groupn);
 
-                            n = (int*) realloc(n, INT_SIZE * (count + 1));
-                            check_malloc(n);
+                        groupn[count - 1] = (char*) malloc(CHAR_SIZE * temp -> id.ethnicitylen);
+                        check_malloc(groupn[count - 1]);
+                        strcpy(groupn[count - 1], temp -> id.ethnisity);
 
-                            n[j] = 1;
-
-                            i++;
-                        }
+                        n = (int*) realloc(n, INT_SIZE * count);
+                        check_malloc(n);
+                        n[count - 1] = 1;
                     }
                 }
 
@@ -160,19 +167,19 @@ void group(char ch)
                 }
             }
 
-            for(j = 0; j < i; j++)
+            for(j = 0; j < count; j++)
             {
                 printf("In %s, %d billionares were born\n", groupn[j], n[j]);
             }
+
+            for(j = 0; j < count; j++)
+            {
+                free(groupn[j]);
+            }
+            free(groupn);
+            free(n);
          break;
     }
-
-    for(j = 0; j < i; j++)
-    {
-        free(groupn[j]);
-    }
-    free(groupn);
-    free(n);
 }
 
 void average(char ch)
@@ -181,12 +188,17 @@ void average(char ch)
     int count = count_list();
     billionare *temp = head;
 
+    if(check_list_empty(head))
+    {
+        return;
+    }
+
     switch(ch)
     {
-        case 'A':
+        case 'A': // average age
             while(TRUE)
             {
-                sums += 2024 - atoi(temp -> birthdate.year); // Na to koita3w an mporw na to kanw me time.h
+                sums += 2024 - temp -> birthdate.year; // Na to koita3w an mporw na to kanw me time.h
 
                 temp = temp -> next;
                 if(temp == head)
@@ -196,14 +208,14 @@ void average(char ch)
             }
 
             average = sums / count;
-            printf("The average age of the billionares is %.2f\n", average);
+            printf("\nThe average age of the billionares is %.2f\n", average);
          break;
         
-        case 'N':
+        case 'N': // average networth
             sums = sum();
 
             average = sums / count;
-            printf("The average networth of the billionares is %.2f\n", average);
+            printf("\nThe average networth of the billionares is %.2f\n", average);
          break;
     }
 }
@@ -219,15 +231,20 @@ void median(char ch)
     double median = 0, *array2 = NULL;
     billionare *temp = head;
 
+    if(check_list_empty(head))
+    {
+        return;
+    }
+
     switch(ch)
     {
-        case 'A':
+        case 'A': // median age
             array = (int*) malloc(INT_SIZE * len);
             check_malloc(array);
 
             while(TRUE)
             {
-                array[i] = 2024 - atoi(temp -> birthdate.year); // Na to koita3w an mporw na to kanw me time.h
+                array[i] = 2024 - temp -> birthdate.year; // Na to koita3w an mporw na to kanw me time.h
 
                 temp = temp -> next;
                 if(temp == head)
@@ -249,12 +266,12 @@ void median(char ch)
                 median = array[len / 2];
             }
 
-            printf("The median age of the billionares is %.2f\n", median);
+            printf("\nThe median age of the billionares is %.2f\n", median);
 
             free(array);
          break;
 
-        case 'N':
+        case 'N': // median networth
             array2 = (double*) malloc(DOUBLE_SIZE * len);
             check_malloc(array2);
 
@@ -282,7 +299,7 @@ void median(char ch)
                 median = array2[len / 2];
             }
 
-            printf("The median networth of the billionares is %.2f\n", median);
+            printf("\nThe median networth of the billionares is %.2f\n", median);
 
             free(array2);
          break;
@@ -294,6 +311,11 @@ int count_list(void)
 {
     int count = 0;
     billionare *temp = head;
+
+    if(check_list_empty(head))
+    {
+        return 0;
+    }
 
     while(TRUE)
     {

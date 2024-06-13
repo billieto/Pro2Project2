@@ -1,9 +1,10 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define MAX_SIZE 200
-#define TRUE 1
+#define MAX_SIZE 200 // acts as a buffer for the input
+#define TRUE 1 
 #define FALSE 0
+#define BONUS TRUE
 #define CHAR_SIZE sizeof(char)
 #define LIST_SIZE sizeof(billionare)
 

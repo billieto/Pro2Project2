@@ -9,7 +9,7 @@
 void print(char ch, char *str, char print)
 {
     billionare *temp = head;
-    int len = 0, i = 0;
+    int flag = FALSE, num = 0, num2 = 0, num3 = 0;
     char *token = NULL, *token2 = NULL, *token3 = NULL;
 
     if(check_list_empty(head))
@@ -17,39 +17,46 @@ void print(char ch, char *str, char print)
         return;
     }
 
-    switch(print)
+    switch(print) // cuts the string into pieces so we can compare them, default is networth
     {
         case '/':
             token = strtok(str, "/");
             token2 = strtok(NULL, "/");
             token3 = strtok(NULL, "/");
+
+            num = atoi(token);
+            num2 = atoi(token2);
+            num3 = atoi(token3);
          break;
 
         case ':':
             token = strtok(str, ":");
             token2 = strtok(NULL, ":");
+
+            num = atoi(token);
+            num2 = atoi(token2);
          break;
     }
 
     switch(ch)
     {
-        case '+':
+        case '+': // print above
             switch(print)
             {
-                case '/':
+                case '/': // birthdate
                     while(TRUE)
                     {
-                        if((temp -> birthdate.year > atoi(token3)))
+                        if((temp -> birthdate.year > num3))
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
-                        else if(temp -> birthdate.year == atoi(token3) && temp -> birthdate.month > atoi(token2))
+                        else if(temp -> birthdate.year == num3 && temp -> birthdate.month > num2)
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
-                        else if(temp -> birthdate.year == atoi(token3) && temp -> birthdate.month == atoi(token2) && temp -> birthdate.day > atoi(token))
+                        else if(temp -> birthdate.year == num3 && temp -> birthdate.month == num2 && temp -> birthdate.day > num)
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -61,16 +68,16 @@ void print(char ch, char *str, char print)
                     }
                  break;
 
-                case ':':
+                case ':': // birthtime
                     while(TRUE)
                     {
-                        if((temp -> birthtime.hour > atoi(token)))
+                        if((temp -> birthtime.hour > num))
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
-                        else if(temp -> birthtime.hour == atoi(token) && temp -> birthtime.minutes > atoi(token2))
+                        else if(temp -> birthtime.hour == num && temp -> birthtime.minutes > num2)
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -82,12 +89,12 @@ void print(char ch, char *str, char print)
                     }
                  break;
 
-                default:
+                default: // networth
                     while(TRUE)
                     {
                         if(temp -> id.networth > atof(str))
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -100,23 +107,23 @@ void print(char ch, char *str, char print)
             }
          break;
 
-        case '-':
+        case '-': // print below
             switch(print)
             {
-                case '/':
+                case '/': // birthdate
                     while(TRUE)
                     {
-                        if((temp -> birthdate.year < atoi(token)))
+                        if((temp -> birthdate.year < num))
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
-                        else if(temp -> birthdate.year == atoi(token) && temp -> birthdate.month < atoi(token2))
+                        else if(temp -> birthdate.year == num && temp -> birthdate.month < num2)
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
-                        else if(temp -> birthdate.year == atoi(token) && temp -> birthdate.month == atoi(token2) && temp -> birthdate.day < atoi(token3))
+                        else if(temp -> birthdate.year == num && temp -> birthdate.month == num2 && temp -> birthdate.day < num3)
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -128,16 +135,16 @@ void print(char ch, char *str, char print)
                     }
                  break;
 
-                case ':':
+                case ':': // birthtime
                     while(TRUE)
                     {
-                        if((temp -> birthtime.hour < atoi(token)))
+                        if((temp -> birthtime.hour < num))
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
-                        else if(temp -> birthtime.hour == atoi(token) && temp -> birthtime.minutes < atoi(token2))
+                        else if(temp -> birthtime.hour == num && temp -> birthtime.minutes < num2)
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -149,12 +156,12 @@ void print(char ch, char *str, char print)
                     }
                  break;
 
-                default:
+                default: // networth
                     while(TRUE)
                     {
                         if(temp -> id.networth < atof(str))
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -167,15 +174,15 @@ void print(char ch, char *str, char print)
             }
          break;
         
-        case '=':
+        case '=': // print equal
             switch(print)
             {
-                case '/':
+                case '/': // birthdate
                     while(TRUE)
                     {
-                        if((temp -> birthdate.day == atoi(token)) && temp -> birthdate.month == atoi(token2) && temp -> birthdate.year == atoi(token3))
+                        if((temp -> birthdate.day == num) && temp -> birthdate.month == num2 && temp -> birthdate.year == num3)
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -187,12 +194,12 @@ void print(char ch, char *str, char print)
                     }
                  break;
 
-                case ':':
+                case ':': // birthtime
                     while(TRUE)
                     {
-                        if((temp -> birthtime.hour == atoi(token)) && (temp -> birthtime.hour == atoi(token2)))
+                        if((temp -> birthtime.hour == num) && (temp -> birthtime.minutes == num2))
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -204,12 +211,12 @@ void print(char ch, char *str, char print)
                     }
                  break;
 
-                default:
+                default: // networth
                     while(TRUE)
                     {
                         if(temp -> id.networth == atof(str))
                         {
-                            simple_print(temp);
+                            simple_print(temp, &flag);
                         }
 
                         temp = temp -> next;
@@ -227,8 +234,8 @@ void print(char ch, char *str, char print)
 void find(char ch, char *str)
 {
     billionare *temp = head;
-    int flag = FALSE, len = 0, i = 0;
-    char *chr = NULL;
+    int len = 0, flag2 = FALSE; // flag2 is used to print the header of simple_print() only once
+    char *mal = NULL, *mal2 = NULL;
 
     if(check_list_empty(head))
     {
@@ -243,58 +250,25 @@ void find(char ch, char *str)
     }
     else
     {
-        for(i = 0; i < len; i++)
-        {
-            if(isupper(str[i]))
-            {
-                str[i] = tolower(str[i]);
-            }
-        }
+        all_lower(str, len); 
     }
     
     switch(ch)
     {
-        case 'N':
+        case 'N': // name
             while(TRUE)
             {
-                temp -> id.name[0] = tolower(temp -> id.name[0]);
-                chr = strchr(temp -> id.name, ' ');
-                chr[1] = tolower(chr[1]);
+                mal = strdup(temp -> id.name);
+                check_malloc(mal);
 
-                if((chr = strstr(temp -> id.name, "jr")) != NULL)
+                all_lower(mal, temp -> id.namelen);
+
+                if((strstr(mal, str) != NULL))
                 {
-                    chr[0] = tolower(chr[0]);
+                    simple_print(temp, &flag2);
                 }
 
-                if((chr = strchr(temp -> id.name, '-')) != NULL)
-                {
-                    chr[1] = tolower(chr[1]);
-                }
-
-                if((strstr(temp -> id.name, str) != NULL))
-                {
-                    flag = TRUE;
-                }
-
-                temp -> id.name[0] = toupper(temp -> id.name[0]);
-                chr = strchr(temp -> id.name, ' ');
-                chr[1] = toupper(chr[1]);
-
-                if((chr = strstr(temp -> id.name, "jr")) != NULL)
-                {
-                    chr[0] = toupper(chr[0]);
-                }
-
-                if((chr = strchr(temp -> id.name, '-')) != NULL)
-                {
-                    chr[1] = toupper(chr[1]);
-                }
-
-                if(flag)
-                {
-                    simple_print(temp);
-                    flag = FALSE;
-                }
+                free(mal);
 
                 temp = temp -> next;
 
@@ -305,25 +279,26 @@ void find(char ch, char *str)
             }
          break;
 
-        case 'C':
+        case 'C': // city and country
             while(TRUE)
             {
-                temp -> corp.city[0] = tolower(temp -> corp.city[0]);
-                temp -> corp.country[0] = tolower(temp -> corp.country[0]);
+                mal = strdup(temp -> corp.city);
+                check_malloc(mal);
 
-                if((strstr(temp -> corp.city, str) != NULL) || (strstr(temp -> corp.country, str) != NULL))
+                mal2 = strdup(temp -> corp.country);
+                check_malloc(mal2);
+
+                all_lower(mal, temp -> corp.citylen);
+
+                all_lower(mal2, temp -> corp.countrylen);
+
+                if((strstr(mal, str) != NULL) || (strstr(mal2, str) != NULL))
                 {
-                    flag = TRUE;
+                    simple_print(temp, &flag2);
                 }
 
-                temp -> corp.city[0] = toupper(temp -> corp.city[0]);
-                temp -> corp.country[0] = toupper(temp -> corp.country[0]);
-
-                if(flag)
-                {
-                    simple_print(temp);
-                    flag = FALSE;
-                }
+                free(mal);
+                free(mal2);
 
                 temp = temp -> next;
 
@@ -334,31 +309,20 @@ void find(char ch, char *str)
             }
          break;
 
-        case 'S':
+        case 'S': // source
             while(TRUE)
             {
-                temp -> corp.source[0] = tolower(temp -> corp.source[0]);
-                while((chr = strchr(temp -> corp.source, ' ')) != NULL)
+                mal = strdup(temp -> corp.source);
+                check_malloc(mal);
+
+                all_lower(mal, temp -> corp.sourcelen);
+
+                if((strstr(mal, str) != NULL))
                 {
-                    chr[1] = tolower(chr[1]);
+                    simple_print(temp, &flag2);
                 }
 
-                if((strstr(temp -> corp.source, str) != NULL))
-                {
-                    flag = TRUE;
-                }
-
-                temp -> corp.source[0] = toupper(temp -> corp.source[0]);
-                while((chr = strchr(temp -> corp.source, ' ')) != NULL)
-                {
-                    chr[1] = toupper(chr[1]);
-                }
-
-                if(flag)
-                {
-                    simple_print(temp);
-                    flag = FALSE;
-                }
+                free(mal);
 
                 temp = temp -> next;
 
@@ -369,10 +333,10 @@ void find(char ch, char *str)
             }
          break;
 
-         case '*':
+         case '*': // prints all
             while(TRUE)
             {
-                simple_print(temp);
+                simple_print(temp, &flag2);
 
                 temp = temp -> next;
 
@@ -387,80 +351,83 @@ void find(char ch, char *str)
 
 void delete(char ch)
 {
-    billionare *temp = head;
+    billionare *temp = NULL;
 
     if(check_list_empty(head))
     {
-        puts("Nothing to delete");
+        return;
+    }
+
+    if(head -> prev == head) // if there is only one node
+    {
+        free(head -> id.name);
+        free(head -> corp.city);
+        free(head -> corp.country);
+        free(head -> corp.source);
+        free(head -> id.ethnisity);
+        free(head -> id.bank);
+        free(head);
+        head = NULL;
         return;
     }
 
     switch(ch)
     {
-        case 'N':
-            temp = head -> prev;
-            temp -> prev -> next = head;
+        case 'N': // delete the first node
+            temp = head -> prev -> prev;
+            temp -> next = head;
+            free(head -> prev -> id.name);
+            free(head -> prev -> corp.city);
+            free(head -> prev -> corp.country);
+            free(head -> prev -> corp.source);
+            free(head -> prev -> id.ethnisity);
+            free(head -> prev -> id.bank);
+            free(head -> prev);
+            head -> prev = temp;
+         break;
+
+        case 'O': // delete the last node
+            temp = head;
+            head = head -> next;
             head -> prev = temp -> prev;
+            head -> prev -> next = head;
             free(temp -> id.name);
             free(temp -> corp.city);
             free(temp -> corp.country);
             free(temp -> corp.source);
             free(temp -> id.ethnisity);
+            free(temp -> id.bank);
             free(temp);
-            if(head == temp)
-            {
-                head = NULL;
-            }
-         break;
-
-        case 'O':
-            temp = head -> next;
-            temp -> prev = head -> prev;
-            head -> prev -> next  = temp;
-            free(head -> id.name);
-            free(head -> corp.city);
-            free(head -> corp.country);
-            free(head -> corp.source);
-            free(head -> id.ethnisity);
-            free(head);
-            if(head == temp)
-            {
-                head = NULL;
-            }
-            else
-            {
-                head = temp;
-            }
          break;
     }
 }
 
-void simple_print(billionare *temp)
+void simple_print(billionare *temp, int *flag)
 {
-    printf("\nName: %s\n", temp -> id.name);
-    printf("City: %s\n", temp -> corp.city);
-    printf("Country: %s\n", temp -> corp.country);
-    printf("Source: %s\n", temp -> corp.source);
-    printf("Ethnicity: %s\n", temp -> id.ethnisity);
-    printf("Gender: %c\n", temp -> id.gender);
-    printf("Birthdate: %d/%d/%d\n", temp -> birthdate.day, temp -> birthdate.month, temp -> birthdate.year);
-    if(temp -> birthtime.hour < 10 && temp -> birthtime.minutes < 10)
+    int i;
+    
+    if(!(*flag)) // prints the header only once
     {
-        printf("Birthtime: 0%d:0%d\n", temp -> birthtime.hour, temp -> birthtime.minutes);
+        *flag = TRUE;
+        printf("\n%-40s %-25s %-30s %-35s %-20s %-2s %-10s %-7s %-10s\n",
+                "Name", "City", "Country", "Source", "Ethnicity", "G", "Birth Date n Time", "Net", "Bank account number");
     }
-    else if(temp -> birthtime.hour < 10)
+        //  name  city  country,source,ethnisity,gender 
+    printf("%-40s %-25s %-30s %-35s %-20s %-2c ",
+            temp -> id.name, temp -> corp.city, temp -> corp.country, temp -> corp.source, temp -> id.ethnisity, temp -> id.gender);
+    
+    printf("%02d/%02d/%d ", temp -> birthdate.day, temp -> birthdate.month, temp -> birthdate.year);
+    
+    printf("%02d:%02d", temp -> birthtime.hour, temp -> birthtime.minutes);
+
+    printf("\t%.1f\t", temp -> id.networth);
+
+    for(i = 0; i < 11; i++)
     {
-        printf("Birthtime: 0%d:%d\n", temp -> birthtime.hour, temp -> birthtime.minutes);
+        printf("%d", temp -> id.bank[i]);
     }
-    else if(temp -> birthtime.minutes < 10)
-    {
-        printf("Birthtime: %d:0%d\n", temp -> birthtime.hour, temp -> birthtime.minutes);
-    }
-    else
-    {
-        printf("Birthtime: %d:%d\n", temp -> birthtime.hour, temp -> birthtime.minutes);
-    }
-    printf("Networth: %.1f\n", temp -> id.networth);
+
+    putchar('\n');
 }
 
 double sum(void)
@@ -473,7 +440,7 @@ double sum(void)
         return 0;
     }
 
-    while(TRUE)
+    while(TRUE) // sums the networth of all the billionares
     {
         sum += temp -> id.networth;
 
@@ -499,12 +466,12 @@ void write_node(char *str)
         last = head -> prev;
     }
 
-    token = (char*) malloc(strlen(str) + 1 * CHAR_SIZE);
+    token = strdup(str); 
     check_malloc(token);
-    strcpy(token, str);
 
-    if(check_input(token))
+    if(check_input(token)) // checks if the input is valid with a duplicate of the original string so i can modify it without losing the original
     {
+        free(token);
         return;
     }
 
@@ -517,13 +484,13 @@ void write_node(char *str)
     {
         switch(i)
         {
-            case 0:
+            case 0: // inisializing the name
                 inisialize(&(new -> id.name), &(new -> id.namelen), token);
 
                 if((chr = strchr(new -> id.name, ' ')) != NULL)
                 {
                     chr[1] = toupper(chr[1]);
-                    if(((chr = strchr((chr + 1), ' ')) != NULL) && chr[1] != '&')
+                    while(((chr = strchr((chr + 1), ' ')) != NULL) && chr[1] != '&')
                     {
                         chr[1] = toupper(chr[1]);
                     }
@@ -544,13 +511,28 @@ void write_node(char *str)
                     chr[1] = toupper(chr[1]);
                 }
 
+                if((chr = strchr(new -> id.name, '.')) != NULL)
+                {
+                    chr[1] = toupper(chr[1]);
+                    while(((chr = strchr((chr + 1), '.')) != NULL))
+                    {
+                        chr[1] = toupper(chr[1]);
+                    }
+                }
+
+                if((chr = strchr(new -> id.name, '\'')) != NULL)
+                {
+                    chr[1] = toupper(chr[1]);
+                }
+
                 str = NULL;
              break;
 
-            case 1:
+            case 1: // inisializing the city and country
                 
                 chr = strchr(token, '/');
                 chr[0] = '\0';
+                str2 = chr + 1;
                 
                 if(token[0] == '?')
                 {
@@ -560,61 +542,85 @@ void write_node(char *str)
                 {
                     inisialize(&new -> corp.city, &new -> corp.citylen, token);
                     
-                    if((chr = strchr(new -> corp.country, ' ')) != NULL)
+                    if((chr = strchr(new -> corp.city, ' ')) != NULL)
                     {
                         chr[1] = toupper(chr[1]);
-                    }
-                }
-
-                if(token[0] == '?')
-                {
-                    inisialize(&new -> corp.country, &new -> corp.countrylen, "Unknown");
-                }
-                else
-                {
-                    inisialize(&new -> corp.country, &new -> corp.countrylen, (chr + 1));
-
-                    if((chr = strchr(new -> corp.country, ' ')) != NULL)
-                    {
-                        if(chr[1] == '(')
-                        {
-                            chr[2] = toupper(chr[2]);
-                        }
-                        else
+                        while(((chr = strchr((chr + 1), ' ')) != NULL))
                         {
                             chr[1] = toupper(chr[1]);
                         }
                     }
                 }
+
+                
+                if(str2[0] == '?')
+                {
+                    inisialize(&new -> corp.country, &new -> corp.countrylen, "Unknown");
+                }
+                else
+                {
+                    inisialize(&new -> corp.country, &new -> corp.countrylen, str2);
+
+                    if((chr = strchr(new -> corp.country, ' ')) != NULL)
+                    {
+                        chr[1] = toupper(chr[1]);
+                        while(((chr = strchr((chr + 1), ' ')) != NULL))
+                        {
+                            chr[1] = toupper(chr[1]);
+                        }
+                    }
+
+                    if((chr = strchr(new -> corp.country, '(')) != NULL)
+                    {
+                        chr[1] = toupper(chr[1]);
+                    }
+                }
              break;
 
-            case 2:
+            case 2: // inisializing the source
                 inisialize(&new -> corp.source, &new -> corp.sourcelen, token);
 
                 if((chr = strchr(new -> corp.source, ' ')) != NULL)
                 {
                     chr[1] = toupper(chr[1]);
+                    while(((chr = strchr((chr + 1), ' ')) != NULL) && chr[1] != '&')
+                    {
+                        chr[1] = toupper(chr[1]);
+                    }
                 }
              break;
 
-            case 3:
-                inisialize(&new -> id.ethnisity, &new -> id.ethnicitylen, token);
-
-                if((chr = strchr(new -> id.ethnisity, ' ')) != NULL)
+            case 3: // inisializing the ethnisity
+                if(token[0] == '?')
                 {
-                    chr[1] = toupper(chr[1]);
+                    inisialize(&new -> id.ethnisity, &new -> id.ethnicitylen, "Unknown");
+                }
+                else
+                {
+                    inisialize(&new -> id.ethnisity, &new -> id.ethnicitylen, token);
+                    if((chr = strchr(new -> id.ethnisity, ' ')) != NULL)
+                    {
+                        chr[1] = toupper(chr[1]);
+                    }
                 }
              break;
 
-            case 4:
-                new -> id.gender = token[0];
+            case 4: // inisialiazing the gender
+                if(isupper(token[0]))
+                {
+                    new -> id.gender = token[0];
+                }
+                else
+                {
+                    new -> id.gender = tolower(token[0]);
+                }
              break;
 
-            case 5:
+            case 5: // inisializing the birthdate and birthtime
                 sscanf(token, "%d/%d/%d %d:%d", &new -> birthdate.day, &new -> birthdate.month, &new -> birthdate.year, &new -> birthtime.hour, &new -> birthtime.minutes);
              break;
 
-            case 6:
+            case 6: // inisializing the networth
                 new -> id.networth = atof(token);
              break;
         }
@@ -622,9 +628,9 @@ void write_node(char *str)
         i++;
     }
 
-    bank_account(new);
+    bank_account(new); // inisializing the bank account number
 
-    if(head == NULL)
+    if(head == NULL) // keeping the list circular and doubly linked
     {
         head = new;
         new -> next = new;
@@ -642,9 +648,8 @@ void write_node(char *str)
 void inisialize(char **str, int *len, char *token)
 {
     *len = strlen(token);
-    *str = (char*) malloc((*len + 1) * CHAR_SIZE);
+    *str = strdup(token);
     check_malloc(*str);
-    strcpy(*str, token);
 
     right_input(*str);
 }
@@ -658,7 +663,7 @@ void free_list(void)
         return;
     }
 
-    while(TRUE)
+    while(TRUE) // frees all the memory allocated
     {
         next = temp -> next;
         free(temp -> id.name);
@@ -666,6 +671,7 @@ void free_list(void)
         free(temp -> corp.country);
         free(temp -> corp.source);
         free(temp -> id.ethnisity);
+        free(temp -> id.bank);
         free(temp);
 
         temp = next;
@@ -683,7 +689,8 @@ int check_list_empty(billionare *head)
 {
     if(head == NULL)
     {
-        puts("\nList is empty");
+        puts("\nList is empty cannot do any operation");
+        puts("First load billionares from file or add a new one");
         return TRUE;
     }
 
@@ -706,8 +713,8 @@ void bank_account(billionare *new)
         for(i = 0; i < 10; i++)
         {
             d = (double) rand() / ((double) RAND_MAX + 1);
-            d = d * 10;
-            new -> id.bank[i] = (int) d;
+            d = d * 9;
+            new -> id.bank[i] = (int) d + 1;
         }
 
         for(i = 1; i < 10; i += 2)
@@ -738,5 +745,15 @@ void bank_account(billionare *new)
 
             temp = temp -> next;
         }
+    }
+}
+
+void all_lower(char *str, int len)
+{
+    int i;
+
+    for(i = 0; i < len; i++)
+    {
+        str[i] = tolower(str[i]);
     }
 }
