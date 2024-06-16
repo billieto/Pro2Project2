@@ -29,7 +29,7 @@ typedef struct
     char *ethnisity;
     char gender;
     float networth;
-    int *bank;
+    char *bank;
 }identity;
 
 typedef struct 

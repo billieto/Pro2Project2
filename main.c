@@ -282,7 +282,11 @@ int main(void)
         #endif
         else
         {
-            puts("\nInvalid command, please enter a valid one\nYou can use the command \"man\" to seek help");
+            puts("\nInvalid command, please enter a valid one");
+
+            #if BONUS
+            puts("You can use the command \"man\" to seek help");
+            #endif
         }
     }
 

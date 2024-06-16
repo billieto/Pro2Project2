@@ -10,7 +10,7 @@ void save(char *filename, int input)
 {
     FILE *save = NULL;
     billionare *temp = head;
-    int i = 0, j = 0;
+    int i = 0;
 
     if(check_list_empty(head))
     {
@@ -47,11 +47,7 @@ void save(char *filename, int input)
             fprintf(save, "%d/%d/%d %d:%d;", temp -> birthdate.day, temp -> birthdate.month, temp -> birthdate.year, temp -> birthtime.hour, temp -> birthtime.minutes);
         }
         fprintf(save, "%.1f;", temp -> id.networth);
-        for(j = 0; j < 10; j++)
-        {
-            fprintf(save, "%d", temp -> id.bank[j]);
-        }
-        fprintf(save, "\n");
+        fprintf(save, "%s\n", temp -> id.bank);
 
         i++;
 

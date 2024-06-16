@@ -57,8 +57,8 @@ void manual(void) // inspired from grep manual
     puts("\tIt also creates the file if it does not exist.\n");
     puts(BOLD_ON"  sum"OFF);
     puts("\tPrints the sum of the networth of the billionares in the list.\n");
-    puts(BOLD_ON"  deleteN, deleteO"OFF);
-    puts("\tDeletes the newst (deleteN) or the oldest (deleteO) billionare from the list.\n");
+    puts(BOLD_ON"  deleteN, deleteO, deleteA"OFF);
+    puts("\tDeletes the newst (deleteN) or the oldest (deleteO) billionare from the list or all the billionares in the list.\n");
     puts(BOLD_ON"  exit"OFF);
     puts("\tExits the program.\n");
     puts(BOLD_ON"   averageA, averageN"OFF);

@@ -403,13 +403,11 @@ void delete(char ch)
 }
 
 void simple_print(billionare *temp, int *flag)
-{
-    int i;
-    
+{    
     if(!(*flag)) // prints the header only once
     {
         *flag = TRUE;
-        printf("\n%-40s %-25s %-30s %-35s %-20s %-2s %-10s %-7s %-10s\n",
+        printf("\n%-40s %-25s %-30s %-35s %-20s %-2s %-10s %-7s %-10s\n\n",
                 "Name", "City", "Country", "Source", "Ethnicity", "G", "Birth Date n Time", "Net", "Bank account number");
     }
         //  name  city  country,source,ethnisity,gender 
@@ -422,10 +420,7 @@ void simple_print(billionare *temp, int *flag)
 
     printf("\t%.1f\t", temp -> id.networth);
 
-    for(i = 0; i < 11; i++)
-    {
-        printf("%d", temp -> id.bank[i]);
-    }
+    puts(temp -> id.bank);
 
     putchar('\n');
 }
@@ -485,7 +480,9 @@ void write_node(char *str)
         switch(i)
         {
             case 0: // inisializing the name
-                inisialize(&(new -> id.name), &(new -> id.namelen), token);
+                new -> id.name = strdup(token);
+                check_malloc(new -> id.name);
+                new -> id.namelen = strlen(token);
 
                 if((chr = strchr(new -> id.name, ' ')) != NULL)
                 {
@@ -536,11 +533,15 @@ void write_node(char *str)
                 
                 if(token[0] == '?')
                 {
-                    inisialize(&new -> corp.city, &new -> corp.citylen, "Unknown");
+                    new -> corp.city = strdup("Unknown");
+                    check_malloc(new -> corp.city);
+                    new -> corp.citylen = strlen("Unknown");
                 }
                 else
                 {
-                    inisialize(&new -> corp.city, &new -> corp.citylen, token);
+                    new -> corp.city = strdup(token);
+                    check_malloc(new -> corp.city);
+                    new -> corp.citylen = strlen(token);
                     
                     if((chr = strchr(new -> corp.city, ' ')) != NULL)
                     {
@@ -555,11 +556,15 @@ void write_node(char *str)
                 
                 if(str2[0] == '?')
                 {
-                    inisialize(&new -> corp.country, &new -> corp.countrylen, "Unknown");
+                    new -> corp.country = strdup("Unknown");
+                    check_malloc(new -> corp.country);
+                    new -> corp.countrylen = strlen("Unknown");
                 }
                 else
                 {
-                    inisialize(&new -> corp.country, &new -> corp.countrylen, str2);
+                    new -> corp.country = strdup(str2);
+                    check_malloc(new -> corp.country);
+                    new -> corp.countrylen = strlen(str2);
 
                     if((chr = strchr(new -> corp.country, ' ')) != NULL)
                     {
@@ -578,7 +583,9 @@ void write_node(char *str)
              break;
 
             case 2: // inisializing the source
-                inisialize(&new -> corp.source, &new -> corp.sourcelen, token);
+                new -> corp.source = strdup(token);
+                check_malloc(new -> corp.source);
+                new -> corp.sourcelen = strlen(token);
 
                 if((chr = strchr(new -> corp.source, ' ')) != NULL)
                 {
@@ -593,11 +600,16 @@ void write_node(char *str)
             case 3: // inisializing the ethnisity
                 if(token[0] == '?')
                 {
-                    inisialize(&new -> id.ethnisity, &new -> id.ethnicitylen, "Unknown");
+                    new -> id.ethnisity = strdup("Unknown");
+                    check_malloc(new -> id.ethnisity);
+                    new -> id.ethnicitylen = strlen("Unknown");
                 }
                 else
                 {
-                    inisialize(&new -> id.ethnisity, &new -> id.ethnicitylen, token);
+                    new -> id.ethnisity = strdup(token);
+                    check_malloc(new -> id.ethnisity);
+                    new -> id.ethnicitylen = strlen(token);
+
                     if((chr = strchr(new -> id.ethnisity, ' ')) != NULL)
                     {
                         chr[1] = toupper(chr[1]);
@@ -606,14 +618,14 @@ void write_node(char *str)
              break;
 
             case 4: // inisialiazing the gender
-                if(isupper(token[0]))
-                {
+		        if(isupper(token[0]))
+		        {
                     new -> id.gender = token[0];
-                }
-                else
-                {
-                    new -> id.gender = tolower(token[0]);
-                }
+		        }
+		        else
+		        {
+		        	new -> id.gender = toupper(token[0]);
+		        }
              break;
 
             case 5: // inisializing the birthdate and birthtime
@@ -643,15 +655,6 @@ void write_node(char *str)
         last -> next = new;
         head -> prev = new;
     }
-}
-
-void inisialize(char **str, int *len, char *token)
-{
-    *len = strlen(token);
-    *str = strdup(token);
-    check_malloc(*str);
-
-    right_input(*str);
 }
 
 void free_list(void)
@@ -699,11 +702,11 @@ int check_list_empty(billionare *head)
 
 void bank_account(billionare *new)
 {
-    int i, checkdigit, checkdigit_finder[10], flag = TRUE;
+    int i, checkdigit, checkdigit_finder[10], bank[10], flag = TRUE;
     double d;
     billionare *temp = head;
 
-    new -> id.bank = (int*) malloc(11 * INT_SIZE);
+    new -> id.bank = (char*) malloc(14 * CHAR_SIZE);
     check_malloc(new -> id.bank);
 
     while(flag == TRUE)
@@ -713,33 +716,55 @@ void bank_account(billionare *new)
         for(i = 0; i < 10; i++)
         {
             d = (double) rand() / ((double) RAND_MAX + 1);
-            d = d * 9;
-            new -> id.bank[i] = (int) d + 1;
+            d = d * 10;
+            bank[i] = (int) d;
         }
 
-        for(i = 1; i < 10; i += 2)
+        for(i = 0; i < 10; i++)
         {
-            checkdigit_finder[i] = new -> id.bank[i];
-            checkdigit_finder[i] *= 2;
-
-            if(checkdigit_finder[i] > 9)
+            checkdigit_finder[i] = bank[i];
+            
+            if(i % 2 == 1)
             {
-                checkdigit_finder[i] = checkdigit_finder[i] / 10 + checkdigit_finder[i] % 10;
+                checkdigit_finder[i] *= 2;
+
+                if(checkdigit_finder[i] > 9)
+                {
+                    checkdigit_finder[i] = checkdigit_finder[i] / 10 + checkdigit_finder[i] % 10;
+                }
             }
 
             checkdigit += checkdigit_finder[i];
         }
 
         checkdigit *= 9;
-        checkdigit %= 10;
+        checkdigit %= 10;    //! 
+        //                     0 1 2 3 4 5 6 7 8 9 10
+        // 0123456789012  3    0 1 0 1 0 1 0 1 0 1 0
+        // xxxxx-xxxxx-x'\0'   x y x y x - y x y x y - d
+        new -> id.bank[12] = checkdigit + '0';
+        new -> id.bank[13] = '\0';
+        new -> id.bank[5] = '-';
+        new -> id.bank[11] = '-';
 
-        new -> id.bank[10] = checkdigit;
+        for(i = 0; i < 11; i++)
+        {
+            if(i < 5)
+            {
+                new -> id.bank[i] = checkdigit_finder[i] + '0';
+            }
+            else if(i > 5)
+            {
+                new -> id.bank[i] = checkdigit_finder[i - 1] + '0';
+            }
+        }
 
         while(temp != head)
         {
-            if(!memcmp(new -> id.bank, temp -> id.bank, 11 * INT_SIZE))
+            if(!strcmp(new -> id.bank, temp -> id.bank))
             {
                 flag = TRUE;
+                free(new -> id.bank);
                 break;
             }
 
